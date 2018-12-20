@@ -114,7 +114,7 @@ static void insert_in_run_queue_tail(thread_t *t)
     run_queue_bitmap |= (1<<t->priority);
 }
 
-static void init_thread_struct(thread_t *t, const char *name)
+void init_thread_struct(thread_t *t, const char *name)
 {
     memset(t, 0, sizeof(thread_t));
     t->magic = THREAD_MAGIC;
@@ -565,7 +565,7 @@ void thread_resched(void)
         dprintf(ALWAYS, "arch_context_switch: start preempt, cpu %d, old %p (%s), new %p (%s)\n",
                 cpu, oldthread, oldthread->name, newthread, newthread->name);
 #endif
-        timer_set_periodic(&preempt_timer[cpu], 10, (timer_callback)thread_timer_tick, NULL);
+        timer_set_periodic(&preempt_timer[cpu], 10, thread_timer_tick, NULL);
     }
 #endif
 
@@ -726,7 +726,7 @@ void thread_unblock(thread_t *t, bool resched)
         thread_resched();
 }
 
-enum handler_return thread_timer_tick(void)
+enum handler_return thread_timer_tick(struct timer *t, lk_time_t now, void *arg)
 {
     thread_t *current_thread = get_current_thread();
 

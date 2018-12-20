@@ -30,23 +30,28 @@
 #include <kernel/event.h>
 #include <platform.h>
 
-void clock_tests(void)
+int clock_tests(int argc, const cmd_args *argv)
 {
     uint32_t c;
     lk_time_t t;
     lk_bigtime_t t2;
 
+#define CYCLE_COUNT_TRIES 1000000
     thread_sleep(100);
     c = arch_cycle_count();
-    t = current_time();
+    for (int i = 0; i < CYCLE_COUNT_TRIES; i++) {
+        t = current_time();
+    }
     c = arch_cycle_count() - c;
-    printf("%u cycles per current_time()\n", c);
+    printf("%u cycles per current_time()\n", c / CYCLE_COUNT_TRIES);
 
     thread_sleep(100);
     c = arch_cycle_count();
-    t2 = current_time_hires();
+    for (int i = 0; i < CYCLE_COUNT_TRIES; i++) {
+        t2 = current_time_hires();
+    }
     c = arch_cycle_count() - c;
-    printf("%u cycles per current_time_hires()\n", c);
+    printf("%u cycles per current_time_hires()\n", c / CYCLE_COUNT_TRIES);
 
     printf("making sure time never goes backwards\n");
     {
@@ -113,4 +118,6 @@ void clock_tests(void)
         cycles = arch_cycle_count() - cycles;
         printf("%u cycles per second\n", cycles);
     }
+
+    return NO_ERROR;
 }

@@ -38,7 +38,7 @@
 typedef struct vmm_aspace vmm_aspace_t;
 #endif
 
-__BEGIN_CDECLS;
+__BEGIN_CDECLS
 
 /* debug-enable runtime checks */
 #if LK_DEBUGLEVEL > 1
@@ -186,7 +186,8 @@ void uthread_context_switch(thread_t *oldthread, thread_t *newthread);
 #endif
 
 /* called on every timer tick for the scheduler to do quantum expiration */
-enum handler_return thread_timer_tick(void);
+struct timer;
+enum handler_return thread_timer_tick(struct timer *, lk_time_t now, void *arg);
 
 /* the current thread */
 thread_t *get_current_thread(void);
@@ -250,6 +251,6 @@ extern struct thread_stats thread_stats[SMP_MAX_CPUS];
 
 #endif
 
-__END_CDECLS;
+__END_CDECLS
 
 #endif
